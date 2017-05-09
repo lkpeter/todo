@@ -1,0 +1,48 @@
+﻿@using TODO.Models;
+
+@model EntryViewModel
+
+@{
+    ViewBag.Title = "Új tennivaló";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Request.IsAuthenticated)
+{
+    <div class="contentText">Jelentkezz be a használathoz!</div>
+}
+else
+{
+    if (ViewBag.Error != null)
+    {
+        <div>@ViewBag.Error</div>
+    }
+    if (Model == null)
+    {
+        <div class="contentText">Válassz bejegyzést!</div>
+    }
+    else
+    {
+        <h3>Elvégzett tennivaló</h3>
+        <div class="contentText">
+            <table>
+                <tr><th width="150" height="30">Cím</th><td>@Model.Title</td></tr>
+                <tr><th width="150" height="30">Létrehozva</th><td>@Model.Created</td></tr>
+                <tr><th width="150" height="30">Határidő</th><td>@Model.ExpireDate</td></tr>
+                <tr><th width="150" height="30">Elvégezve</th><td>@Model.DoneDate</td></tr>
+                <tr><th width="150" height="30">Leírás</th><td>@Model.Desc</td></tr>
+                @if (User.IsInRole("Admin"))
+                    {
+                    <tr><th width="150">Felelős</th><td>@Model.Member</td></tr>
+                }
+                @if (User.IsInRole("Member"))
+                    {
+                    <tr><th width="150">Tulajdonos</th><td>@Model.Owner</td></tr>
+                }
+            </table>
+        </div>
+    }
+}

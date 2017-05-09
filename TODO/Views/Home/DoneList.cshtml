@@ -1,0 +1,76 @@
+﻿@using TODO.Models;
+
+@model EntryViewModel
+
+@{
+    ViewBag.Title = "TODO";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Request.IsAuthenticated)
+{
+    <div class="contentText">Jelentkezz be a használathoz!</div>
+}
+else
+{
+    <h3>Elvégezve</h3>
+    if (ViewBag.Error != null)
+    {
+        <div>@ViewBag.Error</div>
+    }
+    if (ViewBag.Entries == null)
+    {
+        <div class="contentText">Nincsenek elvégzett bejegyzések.</div>
+    }
+    else
+    {
+        <div class="contentText">
+            <table>
+                <tr>
+                    <th width="150">Cím</th>
+                    <th width="150">Létrehozva</th>
+                    <th width="150">Elvégezve</th>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <th width="150">Felelős</th>
+                    }
+                    @if (User.IsInRole("Member"))
+                    {
+                        <th width="150">Tulajdonos</th>
+                    }
+                </tr>
+                @foreach (EntryViewModel entry in ViewBag.Entries)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(entry.Title, "ViewEntry", new { id = entry.Id })</td>
+                        <td>@entry.Created</td>
+                        <td>@entry.DoneDate</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td>@entry.Member</td>
+                        }
+                        @if (User.IsInRole("Member"))
+                        {
+                            <td>@entry.Owner</td>
+                        }
+                        @if (User.IsInRole("Admin") || entry.Owner == User.Identity.Name)
+                        {
+                            using (Html.BeginForm("DoneList", "Home"))
+                            {
+                                <td>
+                                    <input type="submit" value="Törlés" />
+                                    <div id="divCheckbox" style="display: none;">
+                                        @Html.TextBox("id", entry.Id)
+                                    </div>
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+}

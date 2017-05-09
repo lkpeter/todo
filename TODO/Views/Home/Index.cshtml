@@ -1,0 +1,81 @@
+﻿@using TODO.Models;
+
+@model EntryViewModel
+
+@{
+    ViewBag.Title = "TODO";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Request.IsAuthenticated)
+{
+    <div class="contentText">Jelentkezz be a használathoz!</div>
+}
+else
+{
+    <h3>Tennivalók</h3>
+    @Html.ActionLink("Új tennivaló", "NewEntry", "Home")
+    if (ViewBag.Error != null)
+    {
+        <div>@ViewBag.Error</div>
+    }
+    if (ViewBag.Entries==null)
+    {
+        <div class="contentText">Nincsenek tennivalók.</div>
+    }
+    else
+    {
+        <div class="contentText">
+            <table>
+                <tr>
+                    <th width="150">Cím</th>
+                    <th width="150">Létrehozva</th>
+                    <th width="150">Határidő</th>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <th width="150">Felelős</th>
+                    }
+                    @if (User.IsInRole("Member"))
+                    {
+                        <th width="150">Tulajdonos</th>
+                    }
+                </tr>
+                @foreach (EntryViewModel entry in ViewBag.Entries)
+                {
+                    <tr>
+                        @if (User.IsInRole("Admin") || entry.Owner == User.Identity.Name)
+                        {
+                            <td>@Html.ActionLink(entry.Title, "SetEntry", new { id = entry.Id })</td>
+                        }
+                        else
+                        {
+                            <td>@Html.ActionLink(entry.Title, "ViewEntry", new { id = entry.Id })</td>
+                        }
+                        <td>@entry.Created</td>
+                        <td>@entry.ExpireDate</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td>@entry.Member</td>
+                        }
+                        @if (User.IsInRole("Member"))
+                        {
+                            <td>@entry.Owner</td>
+                        }
+                        @using (Html.BeginForm("Index","Home"))
+                        {
+                            <td>
+                                <input type="submit" value="Kész" />
+                                <div id="divCheckbox" style="display: none;">
+                                    @Html.TextBox("id", entry.Id)
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+}

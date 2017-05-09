@@ -1,0 +1,39 @@
+﻿@using TODO.Models;
+
+@model EntryViewModel
+
+@{
+    ViewBag.Title = "Új tennivaló";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Request.IsAuthenticated)
+{
+    <div class="contentText">Jelentkezz be a használathoz!</div>
+}
+else
+{
+    if (ViewBag.ID != null)
+    {
+        int id = ViewBag.ID;
+        <h3>Tennivaló szerkesztése</h3>
+        <div class="contentText">
+            @using (Html.BeginForm())
+            {
+                @Html.EditorForModel()
+                if (User.IsInRole("Admin"))
+                {
+                    <label>Felelős:</label><br>
+                    @Html.DropDownList("SelectedMember", Model.Members)
+                }
+                <div id="divCheckbox" style="display: none;">
+                    @Html.TextBox("id", @id)
+                </div>
+            <br><input type="submit" value="Mentés" />
+            }
+        </div>
+    }
+}
