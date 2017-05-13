@@ -1,6 +1,6 @@
 # todo
 
-TODO is a University project developed witch Visual Studio 2017.
+TODO is a University project developed with Visual Studio 2017.
 
 Features:
   - Create and manage todo entries with member profiles.
